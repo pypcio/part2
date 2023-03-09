@@ -9,9 +9,12 @@ const App = () => {
     const Obj = {
       name: newName,
     };
-    setPersons(persons.concat(Obj));
+    persons.filter((person) => person.name === newName).length === 0
+      ? setPersons(persons.concat(Obj))
+      : alert(`Name ${newName} already exists`);
     setNewName("");
   };
+
   const handleNewName = (event) => {
     setNewName(event.target.value);
   };
