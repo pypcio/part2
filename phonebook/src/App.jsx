@@ -35,7 +35,7 @@ const App = () => {
     }).length === 0
       ? phoneNumberRegex.test(newNumber)
         ? Obj.name.length !== 0
-          ? setPersons(persons.concat(Obj))
+          ? (setPersons(persons.concat(Obj)), setDisplay(persons.concat(Obj)))
           : alert("Incorect name")
         : alert("Incorect phone number form, should look like XXX-XXX-XXX")
       : alert(`Name or Number already exists`);
