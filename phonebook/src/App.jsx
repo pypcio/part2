@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import Filter from "./Components/Filter";
 import People from "./Components/People";
 import Form from "./Components/Form";
+import axios from "axios";
 const App = () => {
   const [persons, setPersons] = useState([]);
 
@@ -10,6 +11,14 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [check, setCheck] = useState("");
   const [display, setDisplay] = useState(persons);
+  const url = "http://localhost:3001/phonebook";
+
+  useEffect(() => {
+    axios.get(url).then((response) => {
+      setPersons(response.data);
+      setDisplay(response.data);
+    });
+  }, []);
 
   const handleDisplay = (phrase) => {
     const temp = persons.filter((person) =>
@@ -17,7 +26,14 @@ const App = () => {
     );
     setDisplay(temp);
   };
-
+  const handleSubmit = (newPerson) => {
+    // fetch(url, {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify(newPerson),
+    // });
+    axios.post(url, newPerson);
+  };
   const handleNewPerson = (event) => {
     let idNum = 1;
     if (persons.length !== 0) {
@@ -35,7 +51,9 @@ const App = () => {
     }).length === 0
       ? phoneNumberRegex.test(newNumber)
         ? Obj.name.length !== 0
-          ? (setPersons(persons.concat(Obj)), setDisplay(persons.concat(Obj)))
+          ? (setPersons(persons.concat(Obj)),
+            setDisplay(persons.concat(Obj)),
+            handleSubmit(Obj))
           : alert("Incorect name")
         : alert("Incorect phone number form, should look like XXX-XXX-XXX")
       : alert(`Name or Number already exists`);
@@ -64,7 +82,7 @@ const App = () => {
         handleNewName={handleNewName}
         handleNewPerson={handleNewPerson}
         handleNewPhone={handleNewPhone}
-        newNam={newName}
+        newName={newName}
         newNumber={newNumber}
       />
       <div>
