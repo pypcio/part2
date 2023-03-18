@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Person from "./Person";
 
-const People = ({ persons }) => {
+const People = ({ persons, handleDelete }) => {
   return (
     <div>
       {persons.map((person, index) => (
@@ -10,6 +10,7 @@ const People = ({ persons }) => {
           id={person.id}
           name={person.name}
           number={person.number}
+          handleDelete={handleDelete}
         />
       ))}
     </div>

@@ -4,6 +4,7 @@ import Filter from "./Components/Filter";
 import People from "./Components/People";
 import Form from "./Components/Form";
 import axios from "axios";
+import noteServises from "./servises/phonebook";
 const App = () => {
   const [persons, setPersons] = useState([]);
 
@@ -11,28 +12,37 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [check, setCheck] = useState("");
   const [display, setDisplay] = useState(persons);
-  const url = "http://localhost:3001/phonebook";
+
+  const handleDelete = (id) => {
+    window.confirm("U sure m8?")
+      ? noteServises.deleteUser(id).then((response) => {
+          const updatedData = persons.filter((n) => n.id !== id);
+          setPersons(updatedData);
+          setDisplay(updatedData);
+          // updateNumbers(updatedData);
+          // console.log("Dane zaraz po usunieciu", updatedData);
+          return updatedData;
+        })
+      : alert("Person wasn't delete");
+  };
 
   useEffect(() => {
-    axios.get(url).then((response) => {
-      setPersons(response.data);
-      setDisplay(response.data);
-    });
+    noteServises
+      .getAll()
+      .then((responose) => {
+        console.log(responose);
+        setPersons(responose);
+        setDisplay(responose);
+      })
+      .catch((error) => {
+        console.log("Can't get data!", error);
+      });
   }, []);
-
   const handleDisplay = (phrase) => {
     const temp = persons.filter((person) =>
       person.name.toLowerCase().includes(phrase.toLowerCase())
     );
     setDisplay(temp);
-  };
-  const handleSubmit = (newPerson) => {
-    // fetch(url, {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(newPerson),
-    // });
-    axios.post(url, newPerson);
   };
   const handleNewPerson = (event) => {
     let idNum = 1;
@@ -51,9 +61,15 @@ const App = () => {
     }).length === 0
       ? phoneNumberRegex.test(newNumber)
         ? Obj.name.length !== 0
-          ? (setPersons(persons.concat(Obj)),
-            setDisplay(persons.concat(Obj)),
-            handleSubmit(Obj))
+          ? noteServises
+              .create(Obj)
+              .then((response) => {
+                setPersons(persons.concat(response)),
+                  setDisplay(persons.concat(response));
+              })
+              .catch((error) => {
+                console.log("problem with adding person", error);
+              })
           : alert("Incorect name")
         : alert("Incorect phone number form, should look like XXX-XXX-XXX")
       : alert(`Name or Number already exists`);
@@ -87,10 +103,9 @@ const App = () => {
       />
       <div>
         <h2>Numbers</h2>
-        <People persons={display} />
+        <People persons={display} handleDelete={handleDelete} />
       </div>
     </div>
   );
 };
-
 export default App;
