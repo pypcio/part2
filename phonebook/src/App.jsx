@@ -3,11 +3,9 @@ import "./App.css";
 import Filter from "./Components/Filter";
 import People from "./Components/People";
 import Form from "./Components/Form";
-import axios from "axios";
 import noteServises from "./servises/phonebook";
 const App = () => {
   const [persons, setPersons] = useState([]);
-
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [check, setCheck] = useState("");
@@ -38,12 +36,14 @@ const App = () => {
         console.log("Can't get data!", error);
       });
   }, []);
+
   const handleDisplay = (phrase) => {
     const temp = persons.filter((person) =>
       person.name.toLowerCase().includes(phrase.toLowerCase())
     );
     setDisplay(temp);
   };
+
   const handleNewPerson = (event) => {
     let idNum = 1;
     if (persons.length !== 0) {
@@ -55,12 +55,14 @@ const App = () => {
       number: newNumber,
       id: idNum,
     };
-    const phoneNumberRegex = /^\d{3}-\d{3}-\d{3}$/;
-    persons.filter((person) => {
+    const filterData = persons.filter((person) => {
       return person.name === newName || person.number === newNumber;
-    }).length === 0
-      ? phoneNumberRegex.test(newNumber)
-        ? Obj.name.length !== 0
+    });
+    const getName = filterData.find((p) => p.name === newName);
+    const phoneNumberRegex = /^\d{3}-\d{3}-\d{3}$/;
+    phoneNumberRegex.test(newNumber)
+      ? Obj.name.length !== 0
+        ? filterData.length === 0
           ? noteServises
               .create(Obj)
               .then((response) => {
@@ -70,19 +72,35 @@ const App = () => {
               .catch((error) => {
                 console.log("problem with adding person", error);
               })
-          : alert("Incorect name")
-        : alert("Incorect phone number form, should look like XXX-XXX-XXX")
-      : alert(`Name or Number already exists`);
+          : getName !== undefined
+          ? window.confirm(
+              `Do you want to change previous number : ${getName.number} for ${getName.name} with a new one?`
+            )
+            ? noteServises.update(getName.id, Obj).then((updatedNumber) => {
+                console.log(updatedNumber);
+                const newestNumbers = persons.map((p) =>
+                  p.id !== getName.id ? p : updatedNumber
+                );
+                setPersons(newestNumbers);
+                setDisplay(newestNumbers);
+              })
+            : alert("Action canceled")
+          : alert("Number already exist")
+        : alert("Incorect name")
+      : alert("Incorect phone number form, should look like XXX-XXX-XXX");
     setNewName("");
     setNewNumber("");
   };
+
   const handleNewName = (event) => {
     setNewName(event.target.value);
   };
+
   const handleNewPhone = (event) => {
     const tempNumber = event.target.value;
     setNewNumber(tempNumber);
   };
+
   const handleCheck = (event) => {
     const tempCheck = event.target.value;
     setCheck(tempCheck);

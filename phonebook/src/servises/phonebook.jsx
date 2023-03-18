@@ -12,5 +12,8 @@ const create = (newPhone) => {
 const deleteUser = (id) => {
   return axios.delete(`${url}/${id}`);
 };
-
-export default { getAll, create, deleteUser };
+const update = (id, updatedPhone) => {
+  const request = axios.put(`${url}/${id}`, updatedPhone);
+  return request.then((response) => response.data);
+};
+export default { getAll, create, deleteUser, update };
