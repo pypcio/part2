@@ -2,7 +2,7 @@
   "phonebook": [
     {
       "name": "Arto Hellas",
-      "number": "987-423-423",
+      "number": "987-422-222",
       "id": 1
     },
     {
@@ -26,8 +26,8 @@
       "id": 5
     },
     {
-      "name": "kjashd",
-      "number": "987-987-984",
+      "name": "Tyminek",
+      "number": "097-422-423",
       "id": 6
     }
   ]

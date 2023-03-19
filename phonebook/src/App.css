@@ -4,3 +4,12 @@ p {
 h2 {
   margin-left: 10px;
 }
+.error {
+  color: rgb(20, 133, 34);
+  background: lightgrey;
+  font-size: 0.8rem;
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
