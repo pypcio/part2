@@ -34,6 +34,10 @@ const App = () => {
   };
 
   useEffect(() => {
+    getData();
+  }, []);
+
+  const getData = () => {
     noteServises
       .getAll()
       .then((responose) => {
@@ -42,10 +46,9 @@ const App = () => {
         setDisplay(responose);
       })
       .catch((error) => {
-        console.log("Can't get data!", error);
+        alert("Can't get data!");
       });
-  }, []);
-
+  };
   const handleDisplay = (phrase) => {
     const temp = persons.filter((person) =>
       person.name.toLowerCase().includes(phrase.toLowerCase())
@@ -100,6 +103,15 @@ const App = () => {
                   setPersons(newestNumbers);
                   setDisplay(newestNumbers);
                   return updatedNumber;
+                })
+                .catch((error) => {
+                  setMessage(
+                    `Information of ${getName.name} has already been removed from server`
+                  );
+                  setTimeout(() => {
+                    setMessage(null);
+                  }, 2000);
+                  getData();
                 })
                 .then((updatedNumber) => {
                   setMessage(
