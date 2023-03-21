@@ -4,17 +4,11 @@ import axios from "axios";
 import ShowCountry from "./Components/ShowCountry.jsx";
 
 function App() {
-  const [country, setCountry] = useState(null);
+  const [country, setCountry] = useState("");
   const [countryData, setCountryData] = useState([]);
-  const [countryInfo, setInfo] = useState([]);
   const url = "https://restcountries.com/v3.1/name";
   useEffect(() => {
     axios.get(`${url}/${country}`).then((response) => {
-      // console.log(response.data);
-      // if (response.data.length < 10) {
-
-      // }
-      // setCountryData(response.data);
       const temp = response.data.map((n) => {
         // console.log("kilka", n);
         return { ...n, showFlag: false };
@@ -27,45 +21,34 @@ function App() {
     const cValue = event.target.value;
     setCountry(cValue);
   };
-  const saveCountry = (event) => {
-    event.preventDefault();
-    const Obj = {
-      name: countryData[0].name.common,
-      capital: countryData[0].capital[0],
-      languages: Object.values(countryData[0].languages),
-      flag: countryData[0].flags.png,
-      area: countryData[0].area,
-    };
-    const temp = [];
-    temp.push(Obj);
-    // const temp = Object.values(Obj);
-    setInfo(temp);
-    // console.log("data", Obj);
-  };
-  // console.log("country-info", countryInfo);
-  // if (countryData.length === 1) {
-  //   saveCountry();
-  // }
   const handleFlag = (id) => {
     const copy = countryData.find((n, index) => index === id);
-    console.log("copied", copy);
-    const changedCountry = { ...copy, showFlag: !copy.showFlag };
-    const newData = countryData.map((n, index) =>
-      index !== id ? n : changedCountry
-    );
-    setCountryData(newData);
+    const lat = copy.capitalInfo.latlng[0];
+    const lng = copy.capitalInfo.latlng[1];
+    const part = "daily";
+    axios
+      .get(
+        `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lng}&exclude=${part}&appid=${
+          import.meta.env.VITE_REACT_APP_API_KEY
+        }`
+      )
+      .then((response) => {
+        const changedCountry = {
+          ...copy,
+          showFlag: !copy.showFlag,
+          weather: { ...response.data },
+        };
+        const newData = countryData.map((n, index) =>
+          index !== id ? n : changedCountry
+        );
+        // console.log("weather info", changedCountry.weather);
+        // console.log("copied", changedCountry);
+        setCountryData(newData);
+      });
   };
   return (
     <React.Fragment>
       <div className="App">
-        {/* <form onSubmit={saveCountry} className="formula">
-        <input
-          value={country}
-          onChange={handleCountry}
-          placeholder="Country"
-        ></input>
-        <button type="submit">save</button>
-      </form> */}
         <input
           value={country}
           onChange={handleCountry}

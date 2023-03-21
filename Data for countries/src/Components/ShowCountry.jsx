@@ -1,10 +1,8 @@
 import Country from "./Country.jsx";
-
 const ShowCountry = ({ countryData, handleFlag }) => {
   if (countryData.length !== 0) {
     // console.log("list ", countryData[0].showFlag);
   }
-
   if (countryData.length > 10) {
     return <p>Too many matches, specify another filter</p>;
   } else {
@@ -14,7 +12,7 @@ const ShowCountry = ({ countryData, handleFlag }) => {
           {countryData.map((c, index) => {
             return (
               <div style={{ display: "flex", alignItems: "center" }}>
-                <Country countryInfo={c} />
+                <Country key={index} countryInfo={c} />
                 <button
                   onClick={() => {
                     handleFlag(index);
